@@ -23,54 +23,55 @@ class Game extends Component {
     this.onSortGame         = this.onSortGame.bind(this);
     this.onReverseGame      = this.onReverseGame.bind(this);    
     this.onTogglePos        = this.onTogglePos.bind(this);
-    this.findIndex          = this.findIndex.bind(this);
+    this.findIndexByName    = this.findIndexByName.bind(this);
     this.handleGameByName   = this.handleGameByName.bind(this);
     // this.handleToggleSwap   = this.handleToggleSwap.bind(this);
   }
 
   returnGameList() {
-    return this.props.gameList;
+    const { gameList } = this.props;
+
+    return gameList;
   }
   
   handleRemoveGame(value) {
     const { removeGame }    = this.props.actions;
+
     removeGame(value)
   }
   
   // Sort Ascending
   onSortGame() {
     const { sortGame }      = this.props.actions;
+
     sortGame();
   }
 
   // Sort Descending
   onReverseGame() {
     const { reverseGame }   = this.props.actions;
+
     reverseGame();
   }
 
   onTogglePos() {
     const { toggleGamePos } = this.props.actions;
+
     toggleGamePos();
   }
 
-  componentDidMount() {    
-    // this.props.fetchAllGames();
+  // loading list of games
+  componentDidMount() {        
     const { fetchGames }    = this.props.actions;
-    fetchGames();
-    // console.log(this.props);
 
-    // returns [2, 1, 3]
-    // console.log(array_move([1, 2, 3], 0, 1)); 
-    // let arr = document.querySelector('list-group'); 
-    // arr.style.color = 'red';
+    fetchGames();        
   }
 
   componentWillUnmount() {
     // освободить gameList от значений
   }
 
-  findIndex(name) {
+  findIndexByName(name) {
     const { gameList }                                  = this.props;
 
     return gameList.findIndex( game => game.name == name);
@@ -78,18 +79,21 @@ class Game extends Component {
 
   handleGameByName (gameName) {
     const { isHidden }                                  = this.props;
-    const { foundIndex, replaceGames, toggleGamePos } = this.props.actions;
-    const index                                         = this.findIndex(gameName);
+    const { foundIndex, replaceGames, toggleGamePos }   = this.props.actions;
+    const index                                         = this.findIndexByName(gameName);
     
+    // if the SWAP button is pressed
     if (isHidden === false) {
-      foundIndex(index);
+      foundIndex(index); // keep the previous index
 
+      // two games to choose from
       if (this.state.pairSelectedIndex.length < 2) {
 
+        // keep the previous array of elements and the new array of elements
         const newArr                                    = [...this.state.pairSelectedIndex, index];
-
+        
         this.setState({ pairSelectedIndex: newArr }, () => {
-
+          
           if (newArr.length == 2) {
 
             replaceGames(...newArr);
